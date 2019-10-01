@@ -1,4 +1,5 @@
 const db = require('./db');
+const fs = require('fs');
 const Thing = require('./thing').Thing;
 
 async function getAvailableSizes (vendorcode) {
@@ -56,9 +57,14 @@ async function getThingByBarcode(request, response) {
   let availableColors = await getAvailableColors(thingObject.vendorcode); 
   thingObject.availableColors = availableColors;
 
-  let thingObjectString = JSON.stringify(thingObject);
-  console.log(thingObject);
-  response.status(200).json(thingObjectString); // отправляем готовый объект шмотки
+  if (fs.existsSync(`../public/images/${thingObject.vendorcode}-01.jpg`)) { // если есть фото
+    var imageAsBase64 = fs.readFileSync(`../public/images/${thingObject.vendorcode}-01.jpg`, 'base64');
+    console.log(imageAsBase64);
+  } else {
+    throw new Error ('нет фотографии')
+  }
+
+  response.status(200).json(thingObject); // отправляем готовый объект шмотки
   // // how to convert JPG to BASE64
   // // var imageAsBase64 = fs.readFileSync('../public/images/sea.jpg', 'base64');
 }
