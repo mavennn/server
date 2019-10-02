@@ -39,48 +39,41 @@ const getThingByBarcode = async (request, response) => {
   response.status(200).json(thing)
 };
 
-// async function getThingByBarcode(request, response) {
+async function getThingByBarcode(request, response) {
+  const barcode = request.params.barcode.toString();
+  //получаем всю инфу о вещи из бд
+  let thing = await db.pool.query(`SELECT * FROM ${db.table} WHERE bar_code = ${barcode}`);
+  thing = thing.rows[0]; // в thing хранится json объект со всеми полями таблицы базы данных
+  const thingParams = {
+    title: thing.title,
+    vendorcode: thing.vendor_code,
+    price: thing.price,
+    size: thing.size,
+    brand: thing.brand,
+    color: thing.color,
+    barcode: thing.bar_code,
+  };
 
-//   /*
-//     const thing = new Thing ('barcode');
-//     response.status(200).json(thing)
-//   */
+  const thingObject = new Thing(thingParams); // создаем объект вещи
 
-//   const barcode = request.params.barcode.toString();
-//   //получаем всю инфу о вещи из бд
-//   let thing = await db.pool.query(`SELECT * FROM ${db.table} WHERE bar_code = ${barcode}`);
-//   thing = thing.rows[0]; // в thing хранится json объект со всеми полями таблицы базы данных
-//   const thingParams = {
-//     title: thing.title,
-//     vendorcode: thing.vendor_code,
-//     price: thing.price,
-//     size: thing.size,
-//     brand: thing.brand,
-//     color: thing.color,
-//     barcode: thing.bar_code,
-//   };
+  // добавляем размеры к вещи
+  let availableSizes = await getAvailableSizes(thingObject.vendorcode); 
+  thingObject.availableSizes = availableSizes;
 
-//   const thingObject = new Thing(thingParams); // создаем объект вещи
+  // добавляем цвета к вещи 
+  let availableColors = await getAvailableColors(thingObject.vendorcode); 
+  thingObject.availableColors = availableColors;
 
-//   // добавляем размеры к вещи
-//   let availableSizes = await getAvailableSizes(thingObject.vendorcode); 
-//   thingObject.availableSizes = availableSizes;
-
-//   // добавляем цвета к вещи 
-//   let availableColors = await getAvailableColors(thingObject.vendorcode); 
-//   thingObject.availableColors = availableColors;
-
-//   if (fs.existsSync(`../public/images/${thingObject.vendorcode}-01.jpg`)) { // если есть фото
-//     const imageAsBase64 = fs.readFileSync(`../public/images/${thingObject.vendorcode}-01.jpg`, 'base64');
-//     thingObject._img_base64 = imageAsBase64;
-//   } else {
-//     console.log(`нет фотографии для вещи ${thingObject.barcode}`);
-//     const imageAsBase64 = fs.readFileSync(`../public/no_foto.png`, 'base64');
-//     thingObject._img_base64 = imageAsBase64;
-//   }
-
-//   response.status(200).json(thingObject); // отправляем готовый объект шмотки
-// }
+  // загрузка фото в переменную
+  if (fs.existsSync(`../public/images/${thingObject.vendorcode}-01.jpg`)) { // если есть фото
+    thing._imag_base64 = fs.readFileSync(`../public/images/${thingObject.vendorcode}-01.jpg`, 'base64');
+  } else {
+    console.log(`нет фотографии для вещи ${thingObject.barcode}`);
+    thing._imag_base64 = fs.readFileSync(`../public/no_foto.png`, 'base64');
+  }
+  
+  response.status(200).json(thingObject); // отправляем готовый объект шмотки
+}
 
 module.exports = {
   getThingByBarcode,
