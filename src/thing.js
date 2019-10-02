@@ -9,7 +9,7 @@ class Thing {
         this.size = size;
         this.barcode = barcode;
         this.color = color;
-        this.img_base64 = img_base64
+        this.img_base64 = img_base64;
     }
     
     get _title () {

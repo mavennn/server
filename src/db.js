@@ -13,12 +13,13 @@ const pool = new Pool({
   user, host, database, password, port, table
 });
 
+
 module.exports = {
   pool,
-  user, 
+  user,
   host,
   database,
   password,
   port,
   table,
-};
+}

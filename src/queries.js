@@ -3,12 +3,12 @@ const fs = require('fs');
 const Thing = require('./thing').Thing;
 
 const getBase64Image = (vendorcode) => {
-  if (fs.existsSync(`../public/images/${vendorcode}-01.jpg`)) { // если есть фото
-    return fs.readFileSync(`../public/images/${vendorcode}-01.jpg`, 'base64');
-  } else {
-    console.log(`нет фотографии для вещи ${vendorcode}`);
-    return  fs.readFileSync(`../public/no_foto.png`, 'base64');
-  }
+  const imagePath = fs.existsSync(`../public/images/${vendorcode}-01.jpg`) 
+                      ?`../public/images/${vendorcode}-01.jpg` 
+                      : '../public/no_Foto.jpg'
+  console.log(imagePath);
+  const img64 = 'data:image/jpg;base64, ' + fs.readFileSync(imagePath, 'base64');
+  return img64;
 }
 
 const getAvailableSizes = async (vendorcode) => {
@@ -70,10 +70,8 @@ async function getThingByBarcode(request, response) {
     thingObject._availableSizes = await getAvailableSizes(thingObject.vendorcode);
     thingObject._availableColors = await getAvailableColors(thingObject.vendorcode);
     thingObject._img_base64 = getBase64Image(thingObject.vendorcode);  
-
     response.status(200).json(thingObject); // отправляем готовый объект шмотки
   } else {
-    console.log(thingParams);
     throw new Error ('undefined из базы данных');
   }
 }
