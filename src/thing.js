@@ -1,13 +1,13 @@
 const db = require('./db');
 
 class Thing {
-    constructor ({ brand, color, price, title , size, barcode, vendorcode, img_base64 }) {
+    constructor ({ brand, color, price, title , size, bar_code, vendor_code, img_base64 }) {
         this.title = title;
         this.price = price;
-        this.vendorcode = vendorcode;
+        this.vendorcode = vendor_code;
         this.brand = brand;
         this.size = size;
-        this.barcode = barcode;
+        this.barcode = bar_code;
         this.color = color;
         this.img_base64 = img_base64;
     }
@@ -54,6 +54,10 @@ class Thing {
 
     set _availableColors (colors) {
         this.availableColors = colors;
+    }
+
+    set _recommendations (recs) {
+        this.recommendations = recs;
     }
 };
 
