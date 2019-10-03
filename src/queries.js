@@ -2,7 +2,22 @@ const db = require('./db');
 const fs = require('fs');
 const Thing = require('./thing').Thing;
 
+
+const getRecs = async () => {
+  const recs = await db.pool.query(`SELECT * FROM ${db.table} WHERE images_count != 0 AND amount != 0 ORDER BY RANDOM() LIMIT 10`);
+  let recsArray = [];
+  recs.rows.map(thing => {
+    let recsThingObject = new Thing(thing);
+    recsThingObject._img_base64 = getBase64Image(recsThingObject._vendorcode);
+    recsArray.push(recsThingObject);
+  });
+  return recsArray;
+};
+
 const getBase64Image = (vendorcode) => {
+  /*
+    добавить проверу на наличие image url длля фоток с cdn
+  */
   const imagePath = fs.existsSync(`../public/images/${vendorcode}-01.jpg`) 
                       ?`../public/images/${vendorcode}-01.jpg` 
                       : '../public/no_Foto.jpg'
@@ -55,21 +70,13 @@ async function getThingByBarcode(request, response) {
   //получаем всю инфу о вещи из бд
   let thing = await db.pool.query(`SELECT * FROM ${db.table} WHERE bar_code = ${barcode}`);
   thing = thing.rows[0]; // в thing хранится json объект со всеми полями таблицы базы данных
-  const thingParams = {
-    title: thing.title,
-    vendorcode: thing.vendor_code,
-    price: thing.price,
-    size: thing.size,
-    brand: thing.brand,
-    color: thing.color,
-    barcode: thing.bar_code,
-  };
 
-  if (isThingParamsValid(thingParams)) {
-    const thingObject = new Thing(thingParams); // создаем объект вещи
-    thingObject._availableSizes = await getAvailableSizes(thingObject.vendorcode);
-    thingObject._availableColors = await getAvailableColors(thingObject.vendorcode);
-    thingObject._img_base64 = getBase64Image(thingObject.vendorcode);  
+  if (isThingParamsValid(thing)) {
+    const thingObject = new Thing(thing); // создаем объект вещи
+    thingObject._availableSizes = await getAvailableSizes(thingObject._vendorcode);
+    thingObject._availableColors = await getAvailableColors(thingObject._vendorcode);
+    thingObject._img_base64 = getBase64Image(thingObject._vendorcode);
+    thingObject._recommendations = await getRecs();
     response.status(200).json(thingObject); // отправляем готовый объект шмотки
   } else {
     throw new Error ('undefined из базы данных');
