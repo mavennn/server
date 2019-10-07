@@ -29,6 +29,13 @@ app.use(function(req, res, next) {
 
 app.get('/', (req, res) => res.sendStatus(200));
 app.get('/thing/:barcode', db.getThingByBarcode);
+app.get('/title/:barcode', db.getTitleByBarcode);
+app.get('/brand/:barcode', db.getBrandByBarcode);
+app.get('/size/:barcode', db.getSizeByBarcode);
+app.get('/color/:barcode', db.getColorByBarcode);
+app.get('/price/:barcode', db.getPriceByBarcode);
+app.get('/availableColors/:barcode', db.getAvailableColorsByBarcode);
+app.get('/availableSizes/:barcode', db.getAvailableSizesByBarcode);
 
 let queries = [];
 
