@@ -1,2 +1,2 @@
-# stefanelServer
-# stefanelServer
+Сервер для умного зеркала
+
