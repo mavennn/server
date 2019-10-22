@@ -20,22 +20,18 @@ const TWENTY_MINUETS = 1200000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
-app.use(express.static('dist'));
+// app.use(express.static('dist'));
+app.use(express.static('./public'));
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Content-Type, X-Requested-With");
   next();
 });
 
-app.get('/', (req, res) => res.sendStatus(200));
-app.get('/thing/:barcode', db.getThingByBarcode);
-app.get('/title/:barcode', db.getTitleByBarcode);
-app.get('/brand/:barcode', db.getBrandByBarcode);
-app.get('/size/:barcode', db.getSizeByBarcode);
-app.get('/color/:barcode', db.getColorByBarcode);
-app.get('/price/:barcode', db.getPriceByBarcode);
-app.get('/availableColors/:barcode', db.getAvailableColorsByBarcode);
-app.get('/availableSizes/:barcode', db.getAvailableSizesByBarcode);
+app.get('/', (request, response) => res.sendStatus(200));
+app.get('/getThing/:barcode', db.getThingByBarcode);
+app.get('/getRecs/:barcode', db.getRecsByBarcode);
+app.get('/getThingCardInfo/:barcode', db.getThingCardInfoByBarcode);
 
 let queries = [];
 
