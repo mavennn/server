@@ -29,8 +29,7 @@ function downloadLastFile () {
     });
 
     client.connect(ftpServerConfig);
-};
-
+}
 let rowCounter = 0;
 
 function insertToDataBase(row) {
@@ -52,10 +51,9 @@ function parseFile () {
             // db.pool.query(``);
             const newRow = prettifyRow(row);
             insertToDataBase(newRow);
-        })
+        });
     rowCounter = 0;
-};
-
+}
 function prettifyRow (row) {
     let { vendor_code, title, color, size, bar_code, oldprice, newprice, amount, brand } = row;
     oldprice = oldprice.replace(/\s+/g, '');
@@ -77,8 +75,7 @@ function prettifyRow (row) {
     const newRow = { price, title, color, vendor_code, id, id_capsule, image_url, images_count, bar_code, size, brand, amount };
     rowCounter++;
     return newRow;
-};
-
+}
 const getImagesCount = (vendor_code) => {
     let counter = 0;
     imagesArray.map(img => {
@@ -86,13 +83,13 @@ const getImagesCount = (vendor_code) => {
         if (a === vendor_code) counter++;
     });
     return counter;
-}
+};
 
 function main () {
-    console.log('Обновление базы данных')
+    console.log('Обновление базы данных');
     downloadLastFile();
     parseFile();
     console.log('Обновление завершено')
-};
+}
 
-module.exports = { main }
+module.exports = {main};

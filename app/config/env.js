@@ -5,7 +5,7 @@ class Env {
         const serverAddress = process.env.SERVER_ADDRESS;
         if (serverAddress === undefined) {
             throw new Error('Отсутствует конфигурация IP адреса')
-        };
+        }
         return serverAddress.toString();
     };
 
@@ -64,6 +64,6 @@ class Env {
         }
         return table.toString();
     }
-};
+}
 
 module.exports = { Env };

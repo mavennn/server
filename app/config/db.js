@@ -1,5 +1,5 @@
 const { Pool } = require('pg');
-const Env = require('../utils').Env;
+const Env = require('./env').Env;
 const env = new Env();
 
 const user = env.getDatabaseUser();
@@ -13,7 +13,6 @@ const pool = new Pool({
   user, host, database, password, port, table
 });
 
-
 module.exports = {
   pool,
   user,
@@ -22,4 +21,4 @@ module.exports = {
   password,
   port,
   table,
-}
+};
