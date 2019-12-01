@@ -1,6 +1,4 @@
 const { Pool } = require('pg');
-const Env = require('./env').Env;
-const env = new Env();
 
 const user = env.getDatabaseUser();
 const host = env.getDatabaseHost();
