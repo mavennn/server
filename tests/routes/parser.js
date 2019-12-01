@@ -1,7 +1,7 @@
 const Client = require('ftp');
 const client = new Client();
 
-const db = require('../config/db');
+const db = require('../../config/db');
 
 const fs = require('fs');
 const csv = require('csv-parser');
