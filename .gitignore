@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-node_modules/
 .idea
+node_modules
 .DS_Store
-=======
-/node_modules
-.DS_Store
->>>>>>> b975613476c2fc73c5cd61c1930e211d884db69d
