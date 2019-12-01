@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
+<<<<<<< HEAD
     "server": "nodemon tests/server.js"
+=======
+    "server": "nodemon app/server.js"
+>>>>>>> develop
   },
   "keywords": [],
   "author": "",
