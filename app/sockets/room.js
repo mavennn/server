@@ -1,4 +1,4 @@
-const sockets = require('../constants/sockets');
+const sockets = require("../constants/sockets");
 
 
 module.exports = function (app, queries) {
@@ -8,11 +8,11 @@ module.exports = function (app, queries) {
   const rooms = io.of(sockets.ROOMS);
 
   rooms.on("connection", (room) => {
-    room.on("newRoomConnection", roomNumber => {
+    room.on("newRoomConnection", (roomNumber) => {
       console.log(`Room ${roomNumber} connected`);
     });
 
-    room.on("getConsultant", query => {
+    room.on("getConsultant", (query) => {
       if (_.find(queries, query) === undefined) {
         queries.push(query);
         consultants.emit("getQueries", queries);
@@ -20,17 +20,15 @@ module.exports = function (app, queries) {
       console.log(queries.length);
     });
 
-    room.on("clearRoom", roomNumber => {
-      queries = queries.filter(query => query.room !== roomNumber);
+    room.on("clearRoom", (roomNumber) => {
+      queries = queries.filter((query) => query.room !== roomNumber);
       console.log(queries);
     });
 
-    room.on("roomDisconnected", roomNumber => {
+    room.on("roomDisconnected", (roomNumber) => {
       console.log(`Room ${roomNumber} disconnected`);
     });
 
-    room.on("disconnect", () =>
-      console.log(`Room ${room.handshake.address} disconnected`)
-    );
+    room.on("disconnect", () => console.log(`Room ${room.handshake.address} disconnected`));
   });
 };
