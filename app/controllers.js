@@ -53,3 +53,20 @@ exports.getThingsByCategory = async (req, res, next) => {
   res.status(200).json(suJson(uniq(things)));
   next();
 };
+
+exports.getThingByPid = async (req, res, next) => {
+  if (empty(req)) return req.status(404).json(erJson("Not found"));
+
+  const pid = Number(req.params.pid);
+  let thing = await Thing.findOne({ pid });
+  thing = {
+    picture: thing.pictures[0],
+    name: thing.name,
+    pid: thing.pid,
+    ware: thing.ware
+  };
+
+  if (empty(thing)) return res.status(404).json(erJson("Not found"));
+  res.status(200).json(suJson((thing)));
+  next();
+};
