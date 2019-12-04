@@ -1,5 +1,9 @@
+const mongoose = require('mongoose');
+
 const fs = require("fs");
 const XmlStream = require("xml-stream");
+
+const Category = require('./models/category');
 
 const stream = fs.createReadStream("../files/export_msk_new.xml");
 const xml = new XmlStream(stream);
@@ -13,7 +17,7 @@ const parseCategories = () => {
     const myCategory = {
       name: category.$text,
       id: Number(category.$.id),
-      parentId: Number(category.$.parentId),
+      parentId: Number(category.$.parentId) ? Number(category.$.parentId) : 0,
     };
 
     const small = new Category(myCategory);
@@ -81,6 +85,11 @@ const parseThings = () => {
 };
 
 parseCategories();
+
+mongoose.connect("mongodb://localhost:27017/sportmaster", { keepAlive: 1, useNewUrlParser: true, useUnifiedTopology: true }, () => {
+  parseCategories();
+});
+
 
 /* offer
   url: 'https://www.sportmaster.ru/product/1804529/?city_id=0c5b2444-70a0-4932-980c-b4dc0d3f02b5',

@@ -23,7 +23,9 @@ function connect() {
     .on("error", console.log)
     .on("disconnected", connect)
     .once("open", listen);
-  return mongoose.connect("mongodb://localhost:27017/sportmaster", { keepAlive: 1, useNewUrlParser: true, useUnifiedTopology: true });
+  return mongoose.connect("mongodb://localhost:27017/sportmaster", { keepAlive: 1, useNewUrlParser: true, useUnifiedTopology: true }, () => {
+    console.log("mongoDB connected");
+  });
 }
 
 connect();
