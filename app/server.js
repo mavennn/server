@@ -4,20 +4,17 @@ import ip from 'ip';
 
 const app = express();
 const server = require("http").createServer(app);
+const io = require("socket.io")(server);
 
 require("./express")(app);
 require("./routes")(app);
 require("dotenv").config();
 
-const queries = [];
-
-// require("./sockets/consultant")(app, queries);
-
 function listen() {
   server.listen(3000, (err) => {
     if (err) console.log(err);
-    console.log("server listening on 3000");
-    require("./sockets/room")(server, queries);
+    console.log(`server listening on ${ip.address()}:3000`);
+    require("./sockets")(io);
   })
 }
 
