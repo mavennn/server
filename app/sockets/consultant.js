@@ -1,9 +1,8 @@
 const sockets = require("../constants/sockets");
 
 module.exports = function (app, queries) {
-  const express = require('express');
   const server = require("http").createServer(app);
-  const io = require("socket.io")(server);
+  const io = require('socket.io')(server);
 
   const consultants = io.of(sockets.CONSULTANTS);
 

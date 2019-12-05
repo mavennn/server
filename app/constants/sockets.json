@@ -4,7 +4,7 @@
   "TO_CHECKOUT": "TO_CHECKOUT",
   "GET_CONSULTANT": "GET_CONSULTANT",
   "CONSULTANTS": "consultants",
-  "ROOMS": "rooms",
+  "ROOMS": "/rooms",
   "CALL_TEXT": "Подойти в комнату",
   "BRING_TEXT": "Запрос товара",
   "TO_CHECKOUT_TEXT": "Отнести на кассу"

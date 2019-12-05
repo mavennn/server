@@ -3,6 +3,7 @@ import express from 'express';
 import ip from 'ip';
 
 const app = express();
+const server = require("http").createServer(app);
 
 require("./express")(app);
 require("./routes")(app);
@@ -10,12 +11,14 @@ require("dotenv").config();
 
 const queries = [];
 
-require("./sockets/room")(app, queries);
-require("./sockets/consultant")(app, queries);
+// require("./sockets/consultant")(app, queries);
 
 function listen() {
-  app.listen(3000);
-  console.log(`Express app started on ${ip.address()}:3000`);
+  server.listen(3000, (err) => {
+    if (err) console.log(err);
+    console.log("server listening on 3000");
+    require("./sockets/room")(server, queries);
+  })
 }
 
 function connect() {
