@@ -1,9 +1,9 @@
-import express from 'express';
-import compression from 'compression';
-import cookieParser from 'cookie-parser';
-import bodyParser from 'body-parser';
-import cors from 'cors'
-import helmet from 'helmet';
+const express = require('express');
+const compression = require('compression');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const helmet = require('helmet');
 
 require("dotenv").config();
 
