@@ -1,4 +1,4 @@
-const { empty, erJson, suJson, uniq } = require('../helpers');
+const { empty, erJson, suJson, uniq, uniqByName } = require('../helpers');
 const Thing = require('../models/thing');
 const Category = require('../models/category');
 
@@ -21,6 +21,17 @@ exports.getThingsInfoByCategoryId = async (req, res, next) => {
   const categoryId = Number(req.params.categoryId);
   let things = await Thing.find({ categories: categoryId }, { name: 1, pid: 1, ware: 1, pictures: 1, _id: 0 });
   if (empty(things)) return res.status(404).json(erJson("Not found"));
+  let t = things.map((x) => {
+    return {
+      name: x.name,
+      image: x.pictures[0],
+      pid: x.pid,
+      ware: x.ware
+    }
+  });
+
+  let ress = uniqByName(t);
+
   // things = [
   //   {
   //     pictures: [...],
@@ -35,7 +46,7 @@ exports.getThingsInfoByCategoryId = async (req, res, next) => {
   //     name: String,
   //   }
   // ]
-  res.status(200).json(suJson(things));
+  res.status(200).json(suJson(ress));
   next();
 };
 

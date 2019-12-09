@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import Thing from "./models/thing";
+const mongoose = require('mongoose');
+const Thing = require('./models/thing');
 
 const sockets = require("./constants/sockets");
 

@@ -1,6 +1,7 @@
-import mongoose from 'mongoose';
-import express from 'express';
-import ip from 'ip';
+const mongoose = require('mongoose');
+const express = require('express');
+const ip = require('ip').address();
+const { PORT, MONGO_URL } = require('./config');
 
 const app = express();
 const server = require("http").createServer(app);
@@ -8,12 +9,11 @@ const io = require("socket.io")(server);
 
 require("./express")(app);
 require("./routes")(app);
-require("dotenv").config();
 
 function listen() {
-  server.listen(3000, (err) => {
+  server.listen(PORT, (err) => {
     if (err) console.log(err);
-    console.log(`server listening on ${ip.address()}:3000`);
+    console.log(`server listening on ${ip}:${PORT}`);
     require("./sockets")(io);
   })
 }
@@ -23,7 +23,7 @@ function connect() {
     .on("error", console.log)
     .on("disconnected", connect)
     .once("open", listen);
-  return mongoose.connect("mongodb://localhost:27017/sportmaster", { keepAlive: 1, useNewUrlParser: true, useUnifiedTopology: true }, () => {
+  return mongoose.connect(MONGO_URL, { keepAlive: 1, useNewUrlParser: true, useUnifiedTopology: true }, () => {
     console.log("mongoDB connected");
   });
 }

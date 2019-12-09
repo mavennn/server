@@ -25,6 +25,18 @@ exports.uniq = function (arr) {
   return result;
 };
 
+exports.uniqByName = function (arr) {
+  let result = [];
+
+  for (let obj of arr) {
+    if (result.findIndex(x => x.name === obj.name) === -1) {
+      result.push(obj);
+    }
+  }
+
+  return result;
+};
+
 exports.erJson = function (errText) {
   return {
     type: "Error",

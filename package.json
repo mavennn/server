@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "dev": "nodemon --exec babel-node app/server.js",
+    "dev": "nodemon app/server.js",
     "lint": "eslint app --fix"
   },
   "keywords": [],
