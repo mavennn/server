@@ -1,12 +1,8 @@
-const mongoose = require('mongoose');
-const Thing = require('./models/thing');
-
 const sockets = require("./constants/sockets");
 
 
 module.exports = function (io) {
   const _ = require("underscore");
-  const Thing = require('./models/thing');
 
   let queries = [];
 

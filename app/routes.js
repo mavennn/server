@@ -1,14 +1,19 @@
-const thingController = require('./controllers/thingController');
-const categoryController = require('./controllers/categoryController');
+const db = require('./db/index');
 
 module.exports = function(app) {
+    app.get('/test', async (req, res) => {
+        let a = await db.query('select * from things');
+        res.status(200).json({ ok: "sdf" })
+    });
     // ----- Полная информация о вещи
     // ----- для отображения на главной страницы зеркала
-    app.get('/thing/ware/:ware', thingController.getThingByWare);
-/*-----------------------------------------------------------------------------*/
+
+    // app.get('/thing/ware/:ware', thingController.getThingByWare);
+    /*-----------------------------------------------------------------------------*/
     // ----- Достает инфу о шмотке по PID
     // ----- Для отображения карточки товара
-    app.get('/thing/pid/:pid', thingController.getThingByPid);
+
+    // app.get('/thing/pid/:pid', thingController.getThingByPid);
     // {
     //     "type": "Success",
     //   "data": {
@@ -18,13 +23,15 @@ module.exports = function(app) {
     //       "ware": "82017LHP11"
     // }
     // }
-/*-----------------------------------------------------------------------------*/
+    /*-----------------------------------------------------------------------------*/
     // ----- Массив подкатегорий одной большой категории по parentId
-    app.get('/categories/:parentId', thingController.getCategoriesByParentId);
-/*-----------------------------------------------------------------------------*/
+
+    // app.get('/categories/:parentId', thingController.getCategoriesByParentId);
+    /*-----------------------------------------------------------------------------*/
     // ----- Объект об отдельной категории
     // ----- Дляы
-    app.get('/category/:id/info', categoryController.getCategoryInfo);
+
+    // app.get('/category/:id/info', categoryController.getCategoryInfo);
     // {
     //     "type": "Success",
     //   "data": {
@@ -32,13 +39,19 @@ module.exports = function(app) {
     //       "id": 21665
     // }
     // }
-/*-----------------------------------------------------------------------------*/
+    /*-----------------------------------------------------------------------------*/
     // ----- Массив шмоток одной категории
     // ----- Для Третьего уровня каталога, где уже все шмотки отображаются
-    app.get('/things/by/:categoryId', thingController.getThingsInfoByCategoryId);
-/*-----------------------------------------------------------------------------*/
+
+    // app.get(
+    //     '/things/by/:categoryId',
+    //     thingController.getThingsInfoByCategoryId
+    // );
+    /*-----------------------------------------------------------------------------*/
     // ----- Массив подкатегорий
-    app.get('/category/:id/subcategories', categoryController.getSubcategories);
+
+
+    // app.get('/category/:id/subcategories', categoryController.getSubcategories);
     // {
     //     "type": "Success",
     //   "data": [
