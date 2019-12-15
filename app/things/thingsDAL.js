@@ -149,14 +149,13 @@ class ThingsDAL {
                 'SELECT pid FROM shk WHERE barcode = $1',
                 [barcode]
             );
+
             let pid = Number(pidResult.rows[0].pid);
 
             // сама шмотка
             const thing = await this.getThingByPid(pid);
-            thing.availableColors = await this.getColors(pid);
-            thing.availableSizes = await this.getSizes(pid);
-            thing.price = await this.getPrice(thing.ware);
-            thing.barcode = barcode;
+            thing.recs = await this.getRecsByBarcode(barcode);
+            // console.log(thing);
             return thing;
         } catch (e) {
             console.log(e);
@@ -234,7 +233,6 @@ class ThingsDAL {
             let thing = thingResult.rows[0];
 
             if (thing !== undefined) {
-                console.log('thing', thing);
                 const colorsResult = await this.db.query(
                     'select distinct color from things where name = $1',
                     [thing.name]
@@ -245,15 +243,29 @@ class ThingsDAL {
                     thing.colors.push(color.color);
                 });
             }
+            try {
+                thing.availableSizes = await this.getSizes(pid);
+            } catch (e) {
+                thing.availableSizes = [];
+            }
 
-            let barcode = await this.db.query(
-                'select barcode from shk where pid = $1',
-                [pid]
-            );
-            thing.barcode = Number(barcode.rows[0].barcode);
+            try {
+                thing.price = await this.getPrice(thing.ware);
+            } catch (e) {
+                thing.price = 0;
+            }
 
-            thing.availableSizes = await this.getSizes(pid);
-            thing.price = await this.getPrice(thing.ware);
+            try {
+                let barcode = await this.db.query(
+                  'select barcode from shk where pid = $1',
+                  [pid]
+                );
+                thing.barcode = Number(barcode.rows[0].barcode);
+            } catch (e) {
+                console.log(e);
+            }
+
+
             return thing;
         } catch (e) {
             console.log(e);
@@ -281,19 +293,24 @@ class ThingsDAL {
             const MAX_RECS_COUNT = 10;
             let result = [];
             for (let i = 0; i <= MAX_RECS_COUNT; i++) {
-                const info = await this.getThingByPid(recs[i].pid2);
-                let obj = {
-                    barcode: info.barcode,
-                    pid: info.pid,
-                    name: info.name,
-                    image: info.pictures[0],
-                    score: recs[i].score,
-                    price: info.price,
-                };
-                result.push(obj);
+                try{
+                    const info = await this.getThingByPid(recs[i].pid2);
+                    let obj = {
+                        barcode: info.barcode,
+                        pid: info.pid,
+                        name: info.name,
+                        image: info.pictures[0],
+                        score: recs[i].score,
+                        price: info.price,
+                    };
+                    result.push(obj);
+                } catch (e) {
+                    null;
+                }
             }
             // сортируем
             helper.sortByScore(result);
+            console.log(result);
             return result;
         } catch (e) {
             console.log(e);
