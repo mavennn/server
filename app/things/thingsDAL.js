@@ -215,7 +215,7 @@ class ThingsDAL {
 
             if (priceResult.rows[0] !== undefined)
                 return priceResult.rows[0].price;
-            return null
+            return null;
         } catch (err) {
             console.log(err);
             return err;
@@ -228,11 +228,33 @@ class ThingsDAL {
         try {
             // шмотка по pid
             const thingResult = await this.db.query(
-                'SELECT * FROM things WHERE pid = $1',
+                'SELECT * FROM things WHERE pid = $1 limit 1',
                 [pid]
             );
+            let thing = thingResult.rows[0];
 
-            return thingResult.rows[0];
+            if (thing !== undefined) {
+                console.log('thing', thing);
+                const colorsResult = await this.db.query(
+                    'select distinct color from things where name = $1',
+                    [thing.name]
+                );
+
+                thing.colors = [];
+                colorsResult.rows.map((color) => {
+                    thing.colors.push(color.color);
+                });
+            }
+
+            let barcode = await this.db.query(
+                'select barcode from shk where pid = $1',
+                [pid]
+            );
+            thing.barcode = Number(barcode.rows[0].barcode);
+
+            thing.availableSizes = await this.getSizes(pid);
+            thing.price = await this.getPrice(thing.ware);
+            return thing;
         } catch (e) {
             console.log(e);
             return e;
@@ -258,21 +280,18 @@ class ThingsDAL {
             // дополняем информацию о рекомандациях
             const MAX_RECS_COUNT = 10;
             let result = [];
-            for (const rec of recs) {
-                const info = await this.getThingByPid(rec.pid2);
-                if (info !== undefined && result.length < MAX_RECS_COUNT) {
-                    let obj = {
-                        name: info.name,
-                        pid: info.pid,
-                        image: info.pictures[0],
-                        score: rec.score,
-                        barcode: barcode
-                    };
-
-                    result.push(obj);
-                }
+            for (let i = 0; i <= MAX_RECS_COUNT; i++) {
+                const info = await this.getThingByPid(recs[i].pid2);
+                let obj = {
+                    barcode: info.barcode,
+                    pid: info.pid,
+                    name: info.name,
+                    image: info.pictures[0],
+                    score: recs[i].score,
+                    price: info.price,
+                };
+                result.push(obj);
             }
-
             // сортируем
             helper.sortByScore(result);
             return result;

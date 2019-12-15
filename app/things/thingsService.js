@@ -5,13 +5,11 @@ class ThingsService {
 
     async getThingByBarcode(barcode) {
         if (!barcode) return new Error('error barcode');
-        console.log('уровень service', barcode);
         return await thingDAl.getThingByBarcode(barcode);
     }
 
     async getThingByPid(pid) {
-        if (!pid) return new Error('error barcode');
-        console.log('уровень service', pid);
+        if (!pid) return new Error('error pid');
         return await thingDAl.getThingByPid(pid);
     }
 

@@ -36,7 +36,15 @@ class CatalogDAL {
 
         try {
             let result = await this.db.query(query, [id]);
-            return result.rows;
+            let things = result.rows;
+            for (let i = 0; i < things.length; i++) {
+                let barcode = await this.db.query(
+                    'SELECT barcode FROM shk WHERE ware = $1',
+                    [things[i].ware]
+                );
+                things[i].barcode = barcode.rows[0].barcode;
+            }
+            return things;
         } catch (e) {
             console.log(e);
             return e;
