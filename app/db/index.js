@@ -1,11 +1,12 @@
 const { Pool } = require('pg');
+import config from '../config/index';
 
 const pool = new Pool({
-    user: 'aleksejgadoev',
-    host: 'localhost',
-    database: 'smart_mirror_database',
-    password: '',
-    port: 5432,
+    user: config.database.user,
+    host: config.database.host,
+    database: config.database.name,
+    password: config.database.password,
+    port: config.database.password,
 });
 
 module.exports = {

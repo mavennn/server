@@ -1,9 +1,11 @@
 const fs = require('fs');
 const fastcsv = require('fast-csv');
+import config from '../config/index';
 import thingDAl from '../things/thingsDAL';
-let stream = fs.createReadStream(
-    '/Users/aleksejgadoev/WebstormProjects/server/files/smart_mirror_rests_and_prices.csv'
-);
+
+const restsFilePath = config.files.rests;
+
+let stream = fs.createReadStream(restsFilePath);
 let csvData = [];
 
 let csvStream = fastcsv
