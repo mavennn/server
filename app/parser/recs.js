@@ -3,9 +3,7 @@ const fastcsv = require('fast-csv');
 import config from '../config/index';
 import thingDAl from '../things/thingsDAL';
 
-const recsFilePath = config.files.recs;
-
-let stream = fs.createReadStream(recsFilePath);
+let stream = fs.createReadStream(config.fileFolder + 'smart_mirror_recs.csv');
 let csvData = [];
 
 let csvStream = fastcsv

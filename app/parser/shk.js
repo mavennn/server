@@ -3,9 +3,7 @@ const fastcsv = require('fast-csv');
 import config from '../config/index';
 import thingDAl from '../things/thingsDAL';
 
-const shkFilePath = config.files.shk;
-
-let stream = fs.createReadStream(shkFilePath);
+let stream = fs.createReadStream(config.fileFolder + 'smart_mirror_shk.csv');
 let csvData = [];
 
 let csvStream = fastcsv

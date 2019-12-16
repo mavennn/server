@@ -1,11 +1,10 @@
 import CategoriesDAL from '../categories/categoriesDAL';
 import db from '../db';
 import fs from 'fs';
+import config from '../config/index';
 import XmlStream from 'xml-stream';
 
-const stream = fs.createReadStream(
-    '/Users/aleksejgadoev/WebstormProjects/server/files/export_msk_new.xml'
-);
+const stream = fs.createReadStream(config.fileFolder + 'export_msk_new.xml');
 const xml = new XmlStream(stream);
 const categoriesDAL = new CategoriesDAL(db);
 

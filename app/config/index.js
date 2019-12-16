@@ -18,10 +18,5 @@ module.exports = {
         user: process.env.FTP_USER,
         password: process.env.FTP_PASSWORD,
     },
-    files: {
-        shk: process.env.SHK_FILE_PATH,
-        rests: process.env.RESTS_FILE_PATH,
-        sorted: process.env.SORTED_FILE_PATH,
-        recs: process.env.RECS_FILE_PATH,
-    },
+    fileFolder: process.env.FILES_FOLDER,
 };
