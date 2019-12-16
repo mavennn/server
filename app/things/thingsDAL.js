@@ -154,8 +154,7 @@ class ThingsDAL {
 
             // сама шмотка
             const thing = await this.getThingByPid(pid);
-            thing.recs = await this.getRecsByBarcode(barcode);
-            // console.log(thing);
+            thing.recs = await this.getRecsByPid(pid);
             return thing;
         } catch (e) {
             console.log(e);
@@ -238,9 +237,9 @@ class ThingsDAL {
                     [thing.name]
                 );
 
-                thing.colors = [];
+                thing.availableColors = [];
                 colorsResult.rows.map((color) => {
-                    thing.colors.push(color.color);
+                    thing.availableColors.push(color.color);
                 });
             }
             try {
@@ -257,15 +256,13 @@ class ThingsDAL {
 
             try {
                 let barcode = await this.db.query(
-                  'select barcode from shk where pid = $1',
-                  [pid]
+                    'select barcode from shk where pid = $1',
+                    [pid]
                 );
                 thing.barcode = Number(barcode.rows[0].barcode);
             } catch (e) {
                 console.log(e);
             }
-
-
             return thing;
         } catch (e) {
             console.log(e);
@@ -273,15 +270,8 @@ class ThingsDAL {
         }
     }
 
-    async getRecsByBarcode(barcode) {
+    async getRecsByPid(pid) {
         try {
-            // находим pid  по баркоду
-            const pidResult = await this.db.query(
-                'SELECT pid FROM shk WHERE barcode = $1',
-                [barcode]
-            );
-            let pid = Number(pidResult.rows[0].pid);
-
             // массив рекомендаций pid2 и score
             const recsResult = await this.db.query(
                 'SELECT pid2, score FROM recs WHERE pid1 = $1',
@@ -293,7 +283,7 @@ class ThingsDAL {
             const MAX_RECS_COUNT = 10;
             let result = [];
             for (let i = 0; i <= MAX_RECS_COUNT; i++) {
-                try{
+                try {
                     const info = await this.getThingByPid(recs[i].pid2);
                     let obj = {
                         barcode: info.barcode,
@@ -305,12 +295,12 @@ class ThingsDAL {
                     };
                     result.push(obj);
                 } catch (e) {
-                    null;
+                    console.log(e);
+                    return e;
                 }
             }
             // сортируем
             helper.sortByScore(result);
-            console.log(result);
             return result;
         } catch (e) {
             console.log(e);

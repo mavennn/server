@@ -15,7 +15,6 @@ class CatalogDAL {
 
         try {
             let result = await this.db.query(query, [id]);
-            console.log(result);
             return result.rows;
         } catch (e) {
             console.log(e);
@@ -42,6 +41,8 @@ class CatalogDAL {
                     'SELECT barcode FROM shk WHERE ware = $1',
                     [things[i].ware]
                 );
+                things[i].image = things[i].pictures[0];
+                delete things[i].pictures;
                 things[i].barcode = barcode.rows[0].barcode;
             }
             return things;
