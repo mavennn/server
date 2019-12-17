@@ -15,12 +15,11 @@ let csvStream = fastcsv
         // remove the first line: header
         csvData.shift();
 
-        // connect to the PostgreSQL database
+        // insert to the PostgreSQL database
         csvData.map((row) => {
             let result = row[0].split(';');
             thingDAl.insertRecs(...result);
         });
-        // save csvData
     });
 
 stream.pipe(csvStream);

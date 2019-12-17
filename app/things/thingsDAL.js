@@ -25,7 +25,7 @@ class ThingsDAL {
             console.log(result);
             return result;
         } catch (e) {
-            return e;
+            null;
         }
     }
 
