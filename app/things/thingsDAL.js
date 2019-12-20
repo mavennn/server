@@ -91,18 +91,6 @@ class ThingsDAL {
         }
     }
 
-    async insertToSizes(name) {
-        const query = 'INSERT INTO sizes (name) VALUES ($1)';
-        try {
-            const result = await this.db.query(query, [name]);
-            console.log(result);
-            return result;
-        } catch (e) {
-            console.log(e);
-            return e;
-        }
-    }
-
     async insertThing(thing) {
         let {
             id,
@@ -114,13 +102,15 @@ class ThingsDAL {
             categories,
             images,
             brand,
+            season,
+            sport,
         } = thing;
         id = Number(id);
         pid = Number(pid);
         categories.forEach((el) => (el = Number(el)));
 
         const query =
-            'INSERT INTO things (id, ware, name, pid, color, size, categories, pictures, brand) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
+            'INSERT INTO things (id, ware, name, pid, color, size, categories, pictures, brand, season, sport) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)';
 
         try {
             const result = await this.db.query(query, [
@@ -133,6 +123,8 @@ class ThingsDAL {
                 categories,
                 images,
                 brand,
+                season,
+                sport,
             ]);
             console.log(result);
             return result;
@@ -143,59 +135,26 @@ class ThingsDAL {
     }
 
     async getThingByBarcode(barcode) {
-        try {
-            // находим pid по barcode
-            const pidResult = await this.db.query(
-                'SELECT pid FROM shk WHERE barcode = $1',
-                [barcode]
-            );
-
-            let pid = Number(pidResult.rows[0].pid);
-
-            // сама шмотка
-            const thing = await this.getThingByPid(pid);
-            thing.recs = await this.getRecsByPid(pid);
-            return thing;
-        } catch (e) {
-            console.log(e);
-            return e;
-        }
-    }
-
-    async getSizes(pid) {
-        if (!pid || typeof pid !== 'number') return null;
-
-        try {
-            let result = await this.db.query(
-                'select size from things where pid = $1',
-                [pid]
-            );
-            let sizes = [];
-            result.rows.map((size) => {
-                sizes.push(size.size);
-            });
-            return sizes;
-        } catch (e) {
-            console.log(e);
-            return e;
-        }
-    }
-
-    async getColors(pid) {
-        if (!pid || typeof pid !== 'number') return null;
-
-        try {
-            let thing = await this.getThingByPid(pid);
-
-            let colorsResult = await this.db.query(
-                'select distinct color from things where name = $1',
-                [thing.name]
-            );
-            let colors = [];
-            colorsResult.rows.map((color) => {
-                colors.push(color.color);
-            });
-            return colors;
+        const query = 
+        `SELECT *,
+        array(
+            SELECT things.size AS sizes FROM things WHERE things.pid = (
+                    SELECT shk.pid FROM shk WHERE shk.barcode = $1
+                )
+        ) as availableSizes,
+        array(
+            SELECT distinct things.color FROM things WHERE things.name = (
+                SELECT DISTINCT things.name FROM things WHERE things.ware = (
+                    SELECT shk.ware FROM shk WHERE barcode = $1
+                )
+            )
+        ) as availableColors
+        FROM things WHERE ware = (
+            SELECT shk.ware FROM shk WHERE barcode = $1
+        );`
+        try { 
+            let result = await this.db.query(query, [barcode]);
+            return result.rows[0];
         } catch (e) {
             console.log(e);
             return e;
@@ -220,91 +179,28 @@ class ThingsDAL {
         }
     }
 
-    async getThingByPid(pid) {
-        if (!pid || typeof pid !== 'number') return null;
+    async getRecs (barcode) {
+        const query = 
+        `SELECT DISTINCT
+            things.pictures[1] as  image,
+            things.name
+        FROM things
+        WHERE things.pid IN (
+            SELECT recs.pid2
+            FROM recs
+            WHERE recs.pid1 IN (
+                SELECT shk.pid
+                FROM shk
+                WHERE shk.barcode = $1
+            )
+        )`
 
         try {
-            // шмотка по pid
-            const thingResult = await this.db.query(
-                'SELECT * FROM things WHERE pid = $1 limit 1',
-                [pid]
-            );
-            let thing = thingResult.rows[0];
-
-            if (thing !== undefined) {
-                const colorsResult = await this.db.query(
-                    'select distinct color from things where name = $1',
-                    [thing.name]
-                );
-
-                thing.availableColors = [];
-                colorsResult.rows.map((color) => {
-                    thing.availableColors.push(color.color);
-                });
-            }
-            try {
-                thing.availableSizes = await this.getSizes(pid);
-            } catch (e) {
-                thing.availableSizes = [];
-            }
-
-            try {
-                thing.price = await this.getPrice(thing.ware);
-            } catch (e) {
-                thing.price = 0;
-            }
-
-            try {
-                let barcode = await this.db.query(
-                    'select barcode from shk where pid = $1',
-                    [pid]
-                );
-                thing.barcode = Number(barcode.rows[0].barcode);
-            } catch (e) {
-                console.log(e);
-            }
-            return thing;
+            let result = await this.db.query(query, [barcode]);
+            let recs = result.rows;
+            return recs;
         } catch (e) {
             console.log(e);
-            return e;
-        }
-    }
-
-    async getRecsByPid(pid) {
-        try {
-            // массив рекомендаций pid2 и score
-            const recsResult = await this.db.query(
-                'SELECT pid2, score FROM recs WHERE pid1 = $1',
-                [pid]
-            );
-            let recs = recsResult.rows;
-
-            // дополняем информацию о рекомандациях
-            const MAX_RECS_COUNT = 10;
-            let result = [];
-            for (let i = 0; i <= MAX_RECS_COUNT; i++) {
-                try {
-                    const info = await this.getThingByPid(recs[i].pid2);
-                    let obj = {
-                        barcode: info.barcode,
-                        pid: info.pid,
-                        name: info.name,
-                        image: info.pictures[0],
-                        score: recs[i].score,
-                        price: info.price,
-                    };
-                    result.push(obj);
-                } catch (e) {
-                    console.log(e);
-                    return e;
-                }
-            }
-            // сортируем
-            helper.sortByScore(result);
-            return result;
-        } catch (e) {
-            console.log(e);
-            return e;
         }
     }
 }
