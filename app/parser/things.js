@@ -53,9 +53,13 @@ const parseThings = () => {
             ),
             images: offer.picture,
             brand: offer.vendor,
+            season: getParam(offer.param, 'Сезон') || '',
+            sport: getParam(offer.param, 'Вид спорта') || '',
             // description: offer.description,
             // params: setParams(offer.param),
         };
+
+        // console.log(myThing);
 
         thingDAl.insertThing(myThing);
         // const small = new Thing(myThing);
