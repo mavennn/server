@@ -29,7 +29,11 @@ class CatalogDAL {
             'SELECT DISTINCT ON(pid) pid,\n' +
             '                ware,\n' +
             '                name,\n' +
-            '                pictures\n' +
+            '                brand,\n' +
+            '                color,\n' +
+            '                pictures,\n' +
+            '                season,\n' +
+            '                sport\n' +
             'FROM things\n' +
             'WHERE $1 = ANY (categories) limit 40';
 
