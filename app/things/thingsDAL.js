@@ -154,7 +154,9 @@ class ThingsDAL {
         );`
         try { 
             let result = await this.db.query(query, [barcode]);
-            return result.rows[0];
+            let thing = result.rows[0];
+            thing.barcode = barcode;
+            return thing;
         } catch (e) {
             console.log(e);
             return e;

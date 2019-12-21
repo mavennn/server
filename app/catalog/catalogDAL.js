@@ -22,33 +22,23 @@ class CatalogDAL {
         }
     }
 
-    async things(id) {
-        if (!id || typeof id !== 'number') return null;
-
+    async things(categoryId) {
         const query =
-            'SELECT DISTINCT ON(pid) pid,\n' +
-            '                ware,\n' +
-            '                name,\n' +
-            '                brand,\n' +
-            '                color,\n' +
-            '                pictures,\n' +
-            '                season,\n' +
-            '                sport\n' +
-            'FROM things\n' +
-            'WHERE $1 = ANY (categories) limit 40';
+            `SELECT DISTINCT ON (things.pid)
+                things.pid AS pid,
+                s.barcode AS barcode,
+                things.name AS name,
+                things.brand AS brand,
+                things.id AS id,
+                things.pictures[1] AS image,
+                things.season AS season,
+                things.sport AS sport
+            FROM things INNER JOIN shk s ON things.pid = s.pid
+            WHERE $1 = ANY (categories) AND s.pid = things.pid;`
 
         try {
-            let result = await this.db.query(query, [id]);
+            let result = await this.db.query(query, [categoryId]);
             let things = result.rows;
-            for (let i = 0; i < things.length; i++) {
-                let barcode = await this.db.query(
-                    'SELECT barcode FROM shk WHERE ware = $1',
-                    [things[i].ware]
-                );
-                things[i].image = things[i].pictures[0];
-                delete things[i].pictures;
-                things[i].barcode = barcode.rows[0].barcode;
-            }
             return things;
         } catch (e) {
             console.log(e);
