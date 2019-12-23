@@ -10,9 +10,9 @@ class ThingsController {
         res.status(200).json(thing);
     }
 
-    async thingByPid(req, res, next) {
-        const pid = Number(req.params.pid);
-        let thing = await thingService.getThingByPid(pid);
+    async thingByWare(req, res, next) {
+        const ware = req.params.ware;
+        let thing = await thingService.getThingByWare(ware);
         console.log('thing', thing);
         res.status(200).json(thing);
     }

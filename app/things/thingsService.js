@@ -8,9 +8,9 @@ class ThingsService {
         return await thingDAl.getThingByBarcode(barcode);
     }
 
-    async getThingByPid(pid) {
-        if (!pid) return new Error('error pid');
-        return await thingDAl.getThingByPid(pid);
+    async getThingByWare(ware) {
+        if (!ware) return new Error('error ware');
+        return await thingDAl.getThingByWare(ware);
     }
 
     async getRecsByBarcode(barcode) {
