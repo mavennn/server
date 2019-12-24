@@ -41,7 +41,9 @@ create table things
     size       text,
     categories bigint[],
     pictures   text[]  not null,
-    brand      text
+    brand      text,
+    season     text,
+    sport      text
 );
 
 create unique index things_id_uindex
@@ -54,3 +56,5 @@ create table shk
     model   text,
     ware    text
 );
+
+
