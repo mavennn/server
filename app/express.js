@@ -7,6 +7,10 @@ const helmet = require('helmet');
 
 require("dotenv").config();
 
+/**
+ * Express config
+ * @param app
+ */
 module.exports = function (app) {
   app.use(helmet());
   // Compression middleware (should be placed before express.static)

@@ -6,6 +6,12 @@ import thingDAl from '../things/thingsDAL';
 let stream = fs.createReadStream(config.fileFolder + 'smart_mirror_shk.csv');
 let csvData = [];
 
+/**
+ * read smart_mirror_shk.csv
+ * parse rows
+ * write rows to database
+ * @type {CsvParserStream}
+ */
 let csvStream = fastcsv
     .parse()
     .on('data', function(data) {

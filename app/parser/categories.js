@@ -1,88 +1,41 @@
-import CategoriesDAL from '../categories/categoriesDAL';
-import db from '../db';
-import fs from 'fs';
-import config from '../config/index';
-import XmlStream from 'xml-stream';
+import fs from "fs";
+import XmlStream from "xml-stream";
+import CategoriesDAL from "../categories/categoriesDAL";
+import db from "../db";
+import config from "../config/index";
 
-const stream = fs.createReadStream(config.fileFolder + 'export_msk_new.xml');
+const stream = fs.createReadStream(`${config.fileFolder}export_msk_new.xml`);
 const xml = new XmlStream(stream);
 const categoriesDAL = new CategoriesDAL(db);
 
-xml.collect('categoryId');
-xml.collect('picture');
-xml.collect('param');
+xml.collect("categoryId");
+xml.collect("picture");
+xml.collect("param");
 
+/**
+ * parseCategories
+ *
+ * read export_new_msk.xml
+ * parse info about categories
+ * insert rows to database via thingsDAL
+ */
 const parseCategories = () => {
-    xml.on('endElement: category', (category) => {
-        const myCategory = {
-            name: category.$text,
-            id: Number(category.$.id),
-            parentId: Number(category.$.parentId)
-                ? Number(category.$.parentId)
-                : 0,
-        };
-        const { name, id, parentId } = myCategory;
-        categoriesDAL
-            .insertToCategories(name, id, parentId)
-            .then((data) => console.log(data));
-    });
-
+  xml.on("endElement: category", (category) => {
+    const myCategory = {
+      name: category.$text,
+      id: Number(category.$.id),
+      parentId: Number(category.$.parentId)
+        ? Number(category.$.parentId)
+        : 0,
+    };
+    const { name, id, parentId } = myCategory;
+    categoriesDAL
+      .insertToCategories(name, id, parentId)
+      .then((data) => console.log(data));
+  });
 };
 
 parseCategories();
-// const parseThings = () => {
-//   /* Парсинг шмоток */
-//   xml.on("endElement: offer", (offer) => {
-//     const setParams = (params) => {
-//       const newParams = [];
-//
-//       params.map((param) => {
-//         newParams.push({
-//           name: param.$.name,
-//           value: param.$text,
-//         });
-//       });
-//
-//       return newParams;
-//     };
-//
-//     const getParam = (params, paramName) => {
-//       let color = "";
-//
-//       params.map((param) => {
-//         if (param.$.name === paramName) {
-//           color = param.$text;
-//         }
-//       });
-//
-//       return color;
-//     };
-//
-//     const myThing = {
-//       id: Number(offer.$.id),
-//       pid: Number(offer.$.group_id),
-//       ware: offer.vendorCode,
-//       available: offer.$.available,
-//       name: offer.model,
-//       price: offer.price,
-//       size: getParam(offer.param, "Размер"),
-//       color: getParam(offer.param, "Цвет"),
-//       brand: offer.vendor,
-//       description: offer.description,
-//       categories: offer.categories.categoryId.map((el) => parseInt(el, 10)),
-//       pictures: offer.picture,
-//       params: setParams(offer.param),
-//     };
-//
-//     const small = new Thing(myThing);
-//     console.log(small);
-//     small.save((err) => {
-//       if (err) console.log(err);
-//     });
-//   });
-//
-//   xml.on("end", () => console.log("finish parse offers"));
-// };
 
 /* offer
   url: 'https://www.sportmaster.ru/product/1804529/?city_id=0c5b2444-70a0-4932-980c-b4dc0d3f02b5',

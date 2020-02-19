@@ -1,11 +1,24 @@
 import db from "../db/index";
-import helper from "../helpers";
 
+/**
+ * Things Data Access Layer
+ * Contain database access
+ */
 class ThingsDAL {
   constructor(db) {
     this.db = db;
   }
 
+  /**
+   * insertRecs
+   * write row from recs.csv to database
+   * @param {string} type
+   * @param {string} shop_num
+   * @param {string} pid1
+   * @param {string} pid2
+   * @param {string} score
+   * @returns {Promise<*>}
+   */
   async insertRecs(type, shop_num, pid1, pid2, score) {
     shop_num = Number(shop_num);
     pid1 = Number(pid1);
@@ -28,6 +41,16 @@ class ThingsDAL {
     }
   }
 
+  /**
+   * insertRestsAndPrices
+   * write row from rests_and_prices.csv to database
+   * @param {string} shop_num - shop num of thing
+   * @param {string} ware - ware of thing
+   * @param {string} rest - count of rests of thing
+   * @param {string} price - price of thing
+   * @param price_wo_disc - price without discount
+   * @returns {Promise<*>}
+   */
   async insertRestsAndPrices(shop_num, ware, rest, price, price_wo_disc) {
     shop_num = Number(shop_num);
     rest = Number(rest);
@@ -51,6 +74,17 @@ class ThingsDAL {
     }
   }
 
+  /**
+   * insertShk
+   * insert row from shk.csv to database
+   * Shk === barcode
+   * pid === personal ID
+   * @param {string} barcode - barcode of thing
+   * @param {string} pid - pid of thing
+   * @param {string} model - thing model
+   * @param {string} ware - ware of thing
+   * @returns {Promise<*>}
+   */
   async insertShk(barcode, pid, model, ware) {
     barcode = Number(barcode);
     pid = Number(pid);
@@ -72,6 +106,13 @@ class ThingsDAL {
     }
   }
 
+  /**
+   * insertSortedItems
+   * write row from sorted_items.csv to database
+   * @param {string} pid - pid of thing
+   * @param {string} rn - sorting coefficient
+   * @returns {Promise<*>}
+   */
   async insertSortedItems(pid, rn) {
     pid = Number(pid);
     rn = Number(rn);
@@ -88,6 +129,12 @@ class ThingsDAL {
     }
   }
 
+  /**
+   * insertThing
+   * write info from export_new_msk.xml to database
+   * @param <Object> thing
+   * @returns {Promise<*>}
+   */
   async insertThing(thing) {
     let {
       id,
@@ -130,6 +177,12 @@ class ThingsDAL {
     }
   }
 
+  /**
+   * getThingByBarcode
+   * read thing's data from database by barcode
+   * @param barcode
+   * @returns {Promise<*>}
+   */
   async getThingByBarcode(barcode) {
     const query = `SELECT *,
         array(
@@ -177,6 +230,12 @@ class ThingsDAL {
     }
   }
 
+  /**
+   * getPrice
+   * read price by ware from database
+   * @param {string} ware - ware of thing
+   * @returns {Promise<null|*>}
+   */
   async getPrice(ware) {
     if (!ware || typeof ware !== "string") return null;
 
@@ -193,6 +252,12 @@ class ThingsDAL {
     }
   }
 
+  /**
+   * getRecs
+   * read thing's recs from database by barcode
+   * @param {string} barcode - barcode of thing
+   * @returns {Promise<string[][]|number|[]|SQLResultSetRowList|HTMLCollectionOf<HTMLTableRowElement>|string>}
+   */
   async getRecs(barcode) {
     const query = `SELECT DISTINCT
             things.pictures[1] as  image,
@@ -217,6 +282,12 @@ class ThingsDAL {
     }
   }
 
+  /**
+   * getThingByWare
+   * read thing info from database by ware
+   * @param {string} ware - ware of thing
+   * @returns {Promise<*>}
+   */
   async getThingByWare(ware) {
     const query = `SELECT *,
         -- available sizes

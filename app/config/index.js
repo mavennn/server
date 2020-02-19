@@ -1,5 +1,24 @@
 require('dotenv').config();
 
+/*
+* Read configuration info from .env file
+* .env file must be in root folder
+*
+* .env file example:
+* DB_NAME=
+* DB_HOST=
+* DB_USER=
+* DB_PASSWORD=
+* DB_PORT=
+* ADDRESS=
+* PORT=
+* FTP_HOST=
+* FTP_PORT=
+* FTP_USER=
+* FTP_PASSWORD=
+* FILES_FOLDER=
+* */
+
 module.exports = {
     database: {
         name: process.env.DB_NAME || 'smart_mirror_database',
